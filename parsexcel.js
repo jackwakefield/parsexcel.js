@@ -160,7 +160,7 @@ function extractData(files) {
     // update the individual sheet meta data
     var sheetId = sheetFileName.replace(/xl\/worksheets\/sheet|.xml/g,'');
 
-	if (typeof wbSheetInfo !== 'undefined') {
+	if (typeof wbSheetInfo[sheetId] !== 'undefined') {
 		output[sheetFileName].sheetName = wbSheetInfo[sheetId].name;
 		output[sheetFileName].sheetPosition = wbSheetInfo[sheetId].position;
 	}
