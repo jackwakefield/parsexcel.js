@@ -54,21 +54,21 @@ function extractData(files) {
   }
 
   workbook = libxmljs.parseXml(files['xl/workbook.xml'].contents);
-  
+
   // if excel file has no strings, sharedStrings won't exist
   if (files['xl/sharedStrings.xml'].contents){
 	  strings = libxmljs.parseXml(files['xl/sharedStrings.xml'].contents);
 	} else {
     strings = false;
   }
-  
+
   // if excel file has no styles, styles won't exist
   if (files['xl/styles.xml'].contents){
 	  styles = libxmljs.parseXml(files['xl/styles.xml'].contents);
 	} else {
     styles = false;
   }
-  
+
   var wbSheetInfo = {};
 
   workbook.find('/a:workbook/a:sheets/a:sheet', ns)
@@ -78,7 +78,7 @@ function extractData(files) {
         position: node.attr('id').value().replace(/rId/,'')
       }
     });
-  
+
   var wbEpoch;
 
   workbook.find('/a:workbook/a:workbookPr',ns)
@@ -91,7 +91,7 @@ function extractData(files) {
       wbEpoch = 1900;
      }
    });
-    
+
 
   _(sheets).each(function(sheet,sheetName){
     // get the sheet cells
@@ -99,22 +99,22 @@ function extractData(files) {
       .map(function(node){
         return new Cell(node);
       });
-    
+
     // get the sheet dimensions
     calcSheetDimensions(sheet);
 
     var cols = sheet.dimensions[1] ? sheet.dimensions[1].column - sheet.dimensions[0].column + 1 : 1;
     var rows = sheet.dimensions[1] ? sheet.dimensions[1].row - sheet.dimensions[0].row + 1 : 1;
-    
+
     // add the number of array elements to match the sheet dimensions
     _(rows).times(function() {
       var _row = [];
       _(cols).times(function() { _row.push(' '); });
       output[sheetName].data.push(_row);
     });
-  
+
   });
-  
+
   var rawStyles = {};
   rawStyles.fontStyles = styles.find('/a:styleSheet/a:fonts/a:font', ns);
   rawStyles.fillStyles = styles.find('/a:styleSheet/a:fills/a:fill', ns);
@@ -124,7 +124,7 @@ function extractData(files) {
 	  .map(function (node) {
   		return new CellStyle(node,rawStyles);
   	});
-  
+
 	_(sheets).each(function(sheet,sheetFileName) {
     _(sheet.cells).each(function(cell){
   		var value = {
@@ -156,11 +156,15 @@ function extractData(files) {
 
   		output[sheetFileName].data[cell.row - sheet.dimensions[0].row][cell.column - sheet.dimensions[0].column] = value;
     });
-    
+
     // update the individual sheet meta data
     var sheetId = sheetFileName.replace(/xl\/worksheets\/sheet|.xml/g,'');
-    output[sheetFileName].sheetName = wbSheetInfo[sheetId].name;
-    output[sheetFileName].sheetPosition = wbSheetInfo[sheetId].position;
+
+	if (typeof wbSheetInfo !== 'undefined') {
+		output[sheetFileName].sheetName = wbSheetInfo[sheetId].name;
+		output[sheetFileName].sheetPosition = wbSheetInfo[sheetId].position;
+	}
+
     output[sheetId] = output[sheetFileName];
     delete output[sheetFileName];
 	});
