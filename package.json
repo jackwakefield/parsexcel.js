@@ -16,7 +16,7 @@
   "dependencies": {
     "adm-zip": "^0.4.7",
     "bluebird": "^2.9.13",
-    "libxmljs": "~0.13.0",
+    "libxmljs": "git://github.com/polotek/libxmljs",
     "moment": "^2.9.0",
     "underscore": "~1.8.2"
   },
