@@ -14,7 +14,7 @@
     "inspect-xlsx": "bash test/unpackxlsx.sh"
   },
   "dependencies": {
-    "adm-zip": "^0.4.9",
+    "adm-zip": "^0.4.7",
     "bluebird": "^2.9.13",
     "libxmljs": "~0.13.0",
     "moment": "^2.9.0",
